@@ -1,0 +1,6 @@
+[submodule "submodules/core/submoduler_parent"]
+	path = submodules/core/submoduler_parent
+	url = https://github.com/magenticmarketactualskill/submoduler-core-submoduler_parent.git
+[submodule "submodules/core/submoduler_child"]
+	path = submodules/core/submoduler_child
+	url = https://github.com/magenticmarketactualskill/submoduler-core-submoduler_child.git
