@@ -4,7 +4,7 @@
 # Add lib directory to load path
 $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 
-require 'submoduler/cli'
+require 'submoduler_master'
 
 # Run CLI and exit with returned code
-exit Submoduler::CLI.run(ARGV)
+exit SubmodulerMaster::CLI.run(ARGV)
