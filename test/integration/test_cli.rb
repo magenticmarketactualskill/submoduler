@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require_relative '../test_helper'
-require 'submoduler/cli'
+require 'submoduler_master/cli'
 
-module Submoduler
+module SubmodulerMaster
   class TestCLIIntegration < Minitest::Test
     def setup
       @tmpdir = Dir.mktmpdir
@@ -20,18 +20,18 @@ module Submoduler
 
     def test_cli_with_help_flag
       output = capture_io do
-        exit_code = CLI.run(['--help'])
+        exit_code = SubmodulerMaster::CLI.run(['--help'])
         assert_equal 0, exit_code
       end
 
-      assert_match(/Submoduler - Git Submodule Configuration Tool/, output[0])
+      assert_match(/Submoduler Master/, output[0])
       assert_match(/Usage:/, output[0])
-      assert_match(/Commands:/, output[0])
+      assert_match(/Available commands:/, output[0])
     end
 
     def test_cli_with_no_arguments
       output = capture_io do
-        exit_code = CLI.run([])
+        exit_code = SubmodulerMaster::CLI.run([])
         assert_equal 0, exit_code
       end
 
@@ -40,39 +40,34 @@ module Submoduler
 
     def test_cli_with_unknown_command
       output = capture_io do
-        exit_code = CLI.run(['unknown'])
-        assert_equal 2, exit_code
+        exit_code = SubmodulerMaster::CLI.run(['unknown'])
+        assert_equal 1, exit_code
       end
 
       assert_match(/Unknown command/, output[0])
     end
 
-    def test_cli_report_command
-      # Create a simple .gitmodules
-      File.write('.gitmodules', <<~GITMODULES)
-        [submodule "test"]
-        \tpath = test
-        \turl = https://github.com/test/repo.git
-      GITMODULES
-
+    def test_cli_init_command
       output = capture_io do
-        exit_code = CLI.run(['report'])
-        assert_equal 1, exit_code # Will fail because directory doesn't exist
+        exit_code = SubmodulerMaster::CLI.run(['init', '--project', 'test_project'])
+        assert_equal 0, exit_code
       end
 
-      assert_match(/Submodule Configuration Report/, output[0])
+      # Should have some output about initialization
+      assert_match(/Initializing Submoduler project/, output[0])
     end
 
-    def test_cli_not_in_git_repo
-      # Remove .git directory
-      FileUtils.rm_rf('.git')
-
+    def test_cli_validate_command
+      # First create a project to validate
+      SubmodulerMaster::CLI.run(['init', '--project', 'test_project'])
+      
       output = capture_io do
-        exit_code = CLI.run(['report'])
-        assert_equal 2, exit_code
+        exit_code = SubmodulerMaster::CLI.run(['validate', '--project', 'test_project'])
+        assert_equal 0, exit_code
       end
 
-      assert_match(/Not a git repository/, output[0])
+      # Should have some output about validation
+      assert_match(/Validating Submoduler project/, output[0])
     end
   end
 end

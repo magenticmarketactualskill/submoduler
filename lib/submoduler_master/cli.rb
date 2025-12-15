@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'optparse'
+require_relative 'init_command'
+require_relative 'validate_command'
 
 module SubmodulerMaster
   class CLI
@@ -20,9 +22,9 @@ module SubmodulerMaster
     end
 
     def run
-      if @args.empty?
+      if @args.empty? || @args.include?('--help') || @args.include?('-h')
         display_help
-        return 1
+        return 0
       end
 
       @command = @args.shift
